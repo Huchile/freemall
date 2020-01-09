@@ -54,38 +54,38 @@
                 </ul>
               </div>
               <ul class="cart-item-list">
-                <li>
+                <li v-for="item in cartList" :key="item.productId">
                   <div class="cart-tab-1">
                     <div class="cart-item-check">
-                      <a href="javascipt:;" class="checkbox-btn item-check-btn checked">
+                      <a href="javascipt:;" class="checkbox-btn item-check-btn" :class="{checked:item.checked}">
                         <svg class="icon icon-ok">
                           <use xlink:href="#icon-ok"></use>
                         </svg>
                       </a>
                     </div>
                     <div class="cart-item-pic">
-                      <img src="./../assets/imgs/1.jpg">
+                      <img :src="'/imgs/'+item.productImage">
                     </div>
                     <div class="cart-item-title">
-                      <div class="item-name">小度人工智能音箱</div>
+                      <div class="item-name">{{item.productName}}</div>
                     </div>
                   </div>
                   <div class="cart-tab-2">
-                    <div class="item-price">89</div>
+                    <div class="item-price">{{item.productPrice}}</div>
                   </div>
                   <div class="cart-tab-3">
                     <div class="item-quantity">
                       <div class="select-self select-self-open">
                         <div class="select-self-area">
                           <a class="input-sub">-</a>
-                          <span class="select-ipt">1</span>
+                          <span class="select-ipt">{{item.productNum}}</span>
                           <a class="input-add">+</a>
                         </div>
                       </div>
                     </div>
                   </div>
                   <div class="cart-tab-4">
-                    <div class="item-price-total">￥89.00元</div>
+                    <div class="item-price-total">￥{{item.productPrice*item.productNum}}元</div>
                   </div>
                   <div class="cart-tab-5">
                     <div class="cart-item-opration">
@@ -139,10 +139,28 @@ export default {
   props: {
 
   },
+  data(){
+      return {
+          cartList:[]
+      }
+  },
   components:{
       NavHeader,
       NavFooter,
       Modal
+  },
+  mounted(){
+      this.init()  //初始化购物车列表
+  },
+  methods:{
+      init(){
+          this.axios.get("/mock/cart.json").then((response) => {
+              //console.log(response)
+              let res = response.data
+              //debugger  //打断点
+              this.cartList = res.data
+          })
+      }
   }
 }
 </script>

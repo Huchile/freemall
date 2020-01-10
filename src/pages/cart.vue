@@ -57,7 +57,7 @@
                 <li v-for="item in cartList" :key="item.productId">
                   <div class="cart-tab-1">
                     <div class="cart-item-check">
-                      <a href="javascipt:;" class="checkbox-btn item-check-btn" :class="{checked:item.checked}">
+                      <a href="javascipt:;" class="checkbox-btn item-check-btn" :class="{checked:item.checked}" @click="editCart('checked',item)">
                         <svg class="icon icon-ok">
                           <use xlink:href="#icon-ok"></use>
                         </svg>
@@ -77,15 +77,15 @@
                     <div class="item-quantity">
                       <div class="select-self select-self-open">
                         <div class="select-self-area">
-                          <a class="input-sub">-</a>
+                          <a class="input-sub" @click="editCart('minus',item)">-</a>
                           <span class="select-ipt">{{item.productNum}}</span>
-                          <a class="input-add">+</a>
+                          <a class="input-add" @click="editCart('add',item)">+</a>
                         </div>
                       </div>
                     </div>
                   </div>
                   <div class="cart-tab-4">
-                    <div class="item-price-total">￥{{item.productPrice*item.productNum}}元</div>
+                    <div class="item-price-total">{{(item.productPrice*item.productNum) | currency}}</div>
                   </div>
                   <div class="cart-tab-5">
                     <div class="cart-item-opration">
@@ -152,7 +152,15 @@ export default {
   mounted(){
       this.init()  //初始化购物车列表
   },
+  //过滤器
+  filters:{
+      currency(value){
+          if(!value) return 0.00
+          return '￥' + value.toFixed(2) + '元'
+      }
+  },
   methods:{
+      //初始化购物车列表
       init(){
           this.axios.get("/mock/cart.json").then((response) => {
               //console.log(response)
@@ -160,6 +168,16 @@ export default {
               //debugger  //打断点
               this.cartList = res.data
           })
+      },
+      //修改购物车数量
+      editCart(type,item){
+          if(type == 'add'){
+              item.productNum++
+          }else if (type == 'minus'){
+              item.productNum--
+          }else{
+              item.checked = !item.checked
+          }
       }
   }
 }
